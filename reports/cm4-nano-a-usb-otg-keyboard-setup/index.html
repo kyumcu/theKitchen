@@ -569,6 +569,11 @@ sudo systemctl start usb-hid-keyboard.service</code></pre>
             modifier keys, byte 1 is reserved, and bytes 2-7 hold up to six
             concurrent keycodes.
           </p>
+          <p>
+            If plain shell redirection runs into permissions issues, use
+            <code>sudo tee</code> instead:
+          </p>
+          <pre><code>echo -ne "\x00\x00\x00\x00\x00\x00\x00\x00" | sudo tee /dev/hidg0 &gt; /dev/null</code></pre>
           <pre><code># Press Shift + a
 echo -ne "\x02\x00\x04\x00\x00\x00\x00\x00" &gt; /dev/hidg0
 # Release all keys
