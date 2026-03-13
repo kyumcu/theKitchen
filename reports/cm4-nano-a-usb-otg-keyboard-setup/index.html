@@ -453,22 +453,17 @@ modprobe libcomposite 2&gt;/dev/null || true
 
 cleanup() {
     if [ -d "${GADGET_DIR}" ]; then
-        echo "Removing existing USB gadget..."
-
-        [ -e "${GADGET_DIR}/UDC" ] &amp;&amp; echo "" &gt; "${GADGET_DIR}/UDC" 2&gt;/dev/null || true
-
-        rm -f "${CONFIGS_DIR}/${FUNCTION_NAME}" 2&gt;/dev/null || true
+        echo "" &gt; "${GADGET_DIR}/UDC" 2&gt;/dev/null || true
+        unlink "${CONFIGS_DIR}/${FUNCTION_NAME}" 2&gt;/dev/null || true
+        rmdir "${FUNCTIONS_DIR}" 2&gt;/dev/null || true
         rmdir "${CONFIGS_DIR}/strings/0x409" 2&gt;/dev/null || true
         rmdir "${CONFIGS_DIR}" 2&gt;/dev/null || true
-        rmdir "${FUNCTIONS_DIR}" 2&gt;/dev/null || true
         rmdir "${GADGET_DIR}/strings/0x409" 2&gt;/dev/null || true
         rmdir "${GADGET_DIR}" 2&gt;/dev/null || true
     fi
 }
 
 cleanup
-
-echo "Creating USB HID keyboard gadget..."
 
 mkdir -p "${GADGET_DIR}"
 cd "${GADGET_DIR}" || exit 1
@@ -487,7 +482,7 @@ mkdir -p "${FUNCTIONS_DIR}"
 echo 1 &gt; "${FUNCTIONS_DIR}/protocol"
 echo 1 &gt; "${FUNCTIONS_DIR}/subclass"
 echo 8 &gt; "${FUNCTIONS_DIR}/report_length"
-printf '\x05\x01\x09\x06\xa1\x01\x05\x07\x19\xe0\x29\xe7\x15\x00\x25\x01\x75\x01\x95\x08\x81\x02\x95\x01\x75\x08\x81\x01\x05\x08\x19\x01\x29\x05\x95\x05\x75\x01\x81\x02\x95\x01\x75\x03\x81\x01\x19\x00\x29\x65\x15\x00\x25\x65\x95\x06\x75\x08\x81\x00\xc0' &gt; "${FUNCTIONS_DIR}/report_desc"
+printf '\x05\x01\x09\x06\xa1\x01\x05\x07\x19\xe0\x29\xe7\x15\x00\x25\x01\x75\x01\x95\x08\x81\x02\x95\x01\x75\x08\x81\x01\x95\x05\x75\x01\x05\x08\x19\x01\x29\x05\x91\x02\x95\x01\x75\x03\x91\x01\x95\x06\x75\x08\x15\x00\x25\x65\x05\x07\x19\x00\x29\x65\x81\x00\xc0' &gt; "${FUNCTIONS_DIR}/report_desc"
 
 mkdir -p "${CONFIGS_DIR}/strings/0x409"
 echo "Config 1: HID Keyboard" &gt; "${CONFIGS_DIR}/strings/0x409/configuration"
@@ -496,15 +491,11 @@ echo 250 &gt; "${CONFIGS_DIR}/MaxPower"
 ln -s "${FUNCTIONS_DIR}" "${CONFIGS_DIR}/${FUNCTION_NAME}"
 
 UDC_NAME="$(find /sys/class/udc -mindepth 1 -maxdepth 1 -printf '%f\n' | head -n 1)"
-if [ -z "${UDC_NAME}" ]; then
-    echo "Error: No UDC found"
-    exit 1
-fi
+[ -n "${UDC_NAME}" ] || { echo "Error: No UDC found"; exit 1; }
 
-echo "Binding gadget to UDC: ${UDC_NAME}"
 echo "${UDC_NAME}" &gt; "${GADGET_DIR}/UDC"
-
-echo "USB HID keyboard gadget created successfully."</code></pre>
+echo "Binding gadget to UDC: ${UDC_NAME}"
+ls -l /dev/hidg*</code></pre>
           <h3>Step 3: Create the Stop Script</h3>
           <p>Create the stop script file:</p>
           <pre><code>sudo nano /usr/local/bin/usb-hid-keyboard-stop.sh</code></pre>
