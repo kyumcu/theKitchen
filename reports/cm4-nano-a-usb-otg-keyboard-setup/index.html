@@ -248,6 +248,83 @@
       padding: 0;
     }
 
+    .code-shell {
+      position: relative;
+      margin-top: 14px;
+    }
+
+    .code-shell pre {
+      margin-top: 0;
+    }
+
+    .copy-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1;
+      border: 1px solid rgba(126, 224, 175, 0.2);
+      background: rgba(15, 19, 26, 0.92);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: color 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }
+
+    .copy-button:hover {
+      color: var(--text);
+      border-color: rgba(126, 224, 175, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .copy-button[data-copied="true"] {
+      color: var(--accent);
+      border-color: rgba(126, 224, 175, 0.45);
+    }
+
+    details.fold {
+      margin-top: 14px;
+      border: 1px solid rgba(126, 224, 175, 0.16);
+      border-radius: 16px;
+      background: rgba(13, 18, 25, 0.48);
+      overflow: hidden;
+    }
+
+    details.fold summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 14px 16px;
+      color: var(--text);
+      font-weight: 600;
+      user-select: none;
+    }
+
+    details.fold summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.fold summary::before {
+      content: "+";
+      display: inline-block;
+      width: 1rem;
+      color: var(--accent);
+      margin-right: 6px;
+    }
+
+    details.fold[open] summary::before {
+      content: "-";
+    }
+
+    details.fold .code-shell,
+    details.fold pre {
+      margin: 0;
+      border-radius: 0;
+      border-left: 0;
+      border-right: 0;
+      border-bottom: 0;
+    }
+
     .callout {
       padding: 18px 18px 18px 20px;
       margin-top: 16px;
@@ -435,7 +512,9 @@ libcomposite</code></pre>
           <p>Create the script file:</p>
           <pre><code>sudo nano /usr/local/bin/usb-hid-keyboard.sh</code></pre>
           <p>Paste the following:</p>
-          <pre><code>#!/bin/bash
+          <details class="fold">
+            <summary>Show start script</summary>
+            <pre><code>#!/bin/bash
 set -u
 
 GADGET_DIR="/sys/kernel/config/usb_gadget/rpi_hid"
@@ -496,11 +575,14 @@ UDC_NAME="$(find /sys/class/udc -mindepth 1 -maxdepth 1 -printf '%f\n' | head -n
 echo "${UDC_NAME}" &gt; "${GADGET_DIR}/UDC"
 echo "Binding gadget to UDC: ${UDC_NAME}"
 ls -l /dev/hidg*</code></pre>
+          </details>
           <h3>Step 3: Create the Stop Script</h3>
           <p>Create the stop script file:</p>
           <pre><code>sudo nano /usr/local/bin/usb-hid-keyboard-stop.sh</code></pre>
           <p>Use this content:</p>
-          <pre><code>#!/bin/bash
+          <details class="fold">
+            <summary>Show stop script</summary>
+            <pre><code>#!/bin/bash
 set -u
 
 GADGET_DIR="/sys/kernel/config/usb_gadget/rpi_hid"
@@ -515,6 +597,7 @@ rmdir "${CONFIGS_DIR}" 2&gt;/dev/null || true
 rmdir "${FUNCTIONS_DIR}" 2&gt;/dev/null || true
 rmdir "${GADGET_DIR}/strings/0x409" 2&gt;/dev/null || true
 rmdir "${GADGET_DIR}" 2&gt;/dev/null || true</code></pre>
+          </details>
           <p>Make both scripts executable:</p>
           <pre><code>sudo chmod +x /usr/local/bin/usb-hid-keyboard.sh
 sudo chmod +x /usr/local/bin/usb-hid-keyboard-stop.sh</code></pre>
@@ -523,7 +606,9 @@ sudo chmod +x /usr/local/bin/usb-hid-keyboard-stop.sh</code></pre>
           <p>Create the service file:</p>
           <pre><code>sudo nano /etc/systemd/system/usb-hid-keyboard.service</code></pre>
           <p>Use this content:</p>
-          <pre><code>[Unit]
+          <details class="fold">
+            <summary>Show systemd unit</summary>
+            <pre><code>[Unit]
 Description=USB HID Keyboard Gadget
 After=sys-kernel-config.mount
 Requires=sys-kernel-config.mount
@@ -536,6 +621,7 @@ ExecStop=/usr/local/bin/usb-hid-keyboard-stop.sh
 
 [Install]
 WantedBy=multi-user.target</code></pre>
+          </details>
           <p>Reload systemd to pick up the new unit file:</p>
           <pre><code>sudo systemctl daemon-reload</code></pre>
           <p>Enable the service and start it:</p>
@@ -622,5 +708,44 @@ lsmod | grep libcomposite</code></pre>
       </main>
     </div>
   </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var blocks = document.querySelectorAll("pre");
+      blocks.forEach(function (pre) {
+        if (pre.parentElement && pre.parentElement.classList.contains("code-shell")) {
+          return;
+        }
+
+        var wrapper = document.createElement("div");
+        wrapper.className = "code-shell";
+
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "copy-button";
+        button.textContent = "Copy";
+
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(button);
+        wrapper.appendChild(pre);
+
+        button.addEventListener("click", async function () {
+          try {
+            await navigator.clipboard.writeText(pre.textContent);
+            button.textContent = "Copied";
+            button.dataset.copied = "true";
+            window.setTimeout(function () {
+              button.textContent = "Copy";
+              button.dataset.copied = "false";
+            }, 1200);
+          } catch (error) {
+            button.textContent = "Failed";
+            window.setTimeout(function () {
+              button.textContent = "Copy";
+            }, 1200);
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
