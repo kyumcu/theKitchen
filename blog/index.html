@@ -6,41 +6,47 @@
   <title>Blog | theKitchen</title>
   <meta
     name="description"
-    content="Future writing published on theKitchen."
+    content="Longer notes and occasional essays published on theKitchen."
+  >
+  <link rel="canonical" href="https://kyumcu.github.io/theKitchen/blog/">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/site.css">
+  <meta property="og:title" content="Blog | theKitchen">
+  <meta
+    property="og:description"
+    content="Longer notes and occasional essays published on theKitchen."
+  >
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kyumcu.github.io/theKitchen/blog/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Blog | theKitchen">
+  <meta
+    name="twitter:description"
+    content="Longer notes and occasional essays published on theKitchen."
   >
   <style>
     :root {
-      --bg: #f7f8fb;
-      --paper: #ffffff;
-      --text: #19202b;
-      --muted: #617086;
-      --line: rgba(25, 32, 43, 0.12);
-      --accent: #2d6cdf;
-      --accent-soft: rgba(45, 108, 223, 0.1);
+      --bg: #f3f6fb;
+      --paper: rgba(255, 255, 255, 0.92);
+      --text: #0f172a;
+      --muted: #475569;
+      --line: rgba(15, 23, 42, 0.14);
+      --focus-ring: rgba(37, 99, 235, 0.72);
+      --accent: #2563eb;
+      --accent-soft: rgba(37, 99, 235, 0.12);
       --max: 860px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
     body {
-      margin: 0;
-      min-height: 100vh;
       font-family: Georgia, "Times New Roman", serif;
       color: var(--text);
       background:
-        linear-gradient(180deg, rgba(45, 108, 223, 0.08), transparent 26%),
-        var(--bg);
-    }
-
-    a {
-      color: inherit;
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(99, 102, 241, 0.12), transparent 26%),
+        linear-gradient(180deg, var(--bg), #eef2ff);
     }
 
     .wrap {
-      width: min(calc(100% - 32px), var(--max));
-      margin: 0 auto;
       padding: 32px 0 72px;
     }
 
@@ -55,6 +61,14 @@
     .top a {
       text-decoration: none;
       color: var(--muted);
+    }
+
+    .top-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: flex-end;
     }
 
     .hero {
@@ -111,30 +125,35 @@
         flex-direction: column;
         align-items: flex-start;
       }
+
+      .top-links {
+        justify-content: flex-start;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <div class="wrap container">
     <header class="top">
       <a href="../">← Home</a>
-      <a href="../reports/">Reports</a>
+      <nav class="top-links" aria-label="Secondary">
+        <a href="../reports/">Reports</a>
+        <a href="./" aria-current="page">Blog</a>
+      </nav>
     </header>
 
-    <main class="hero">
-      <p class="eyebrow">Future Writing</p>
+    <main id="content" class="hero">
+      <p class="eyebrow">Writing</p>
       <h1>Blog</h1>
-      <p>
-        This directory is reserved for essays, notes, and updates you publish
-        later. For now it acts as a clear placeholder so the site structure is
-        ready before the writing starts.
-      </p>
+      <p>Longer notes and occasional essays live here.</p>
 
       <section class="placeholder">
         <h2>No posts yet</h2>
         <p>
-          When you are ready, add posts here as static HTML files or a simple
-          index page that links to dated entries.
+          When something ships, this page becomes a list of links. Until then, it’s a
+          quiet corner with a stable URL.
         </p>
       </section>
     </main>

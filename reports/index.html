@@ -8,40 +8,45 @@
     name="description"
     content="Project reports and technical writeups published on theKitchen."
   >
+  <link rel="canonical" href="https://kyumcu.github.io/theKitchen/reports/">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/site.css">
+  <meta property="og:title" content="Reports | theKitchen">
+  <meta
+    property="og:description"
+    content="Project reports and technical writeups published on theKitchen."
+  >
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kyumcu.github.io/theKitchen/reports/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Reports | theKitchen">
+  <meta
+    name="twitter:description"
+    content="Project reports and technical writeups published on theKitchen."
+  >
   <style>
     :root {
-      --bg: #12161f;
-      --bg-soft: #1b2230;
-      --card: rgba(22, 29, 41, 0.88);
+      --bg: #1b2230;
+      --bg-soft: #242f43;
+      --card: rgba(26, 35, 49, 0.82);
       --text: #edf2f7;
-      --muted: #9fb0c6;
-      --line: rgba(159, 176, 198, 0.2);
-      --accent: #7dd3a5;
-      --accent-soft: rgba(125, 211, 165, 0.12);
+      --muted: #aec0d8;
+      --line: rgba(174, 192, 216, 0.22);
+      --focus-ring: rgba(126, 224, 175, 0.72);
+      --accent: #7ee0af;
+      --accent-soft: rgba(126, 224, 175, 0.12);
       --max: 1040px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
     body {
-      margin: 0;
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top right, rgba(125, 211, 165, 0.14), transparent 24%),
-        linear-gradient(180deg, #141925 0%, var(--bg) 100%);
-      min-height: 100vh;
-    }
-
-    a {
-      color: inherit;
+        radial-gradient(circle at top right, rgba(126, 224, 175, 0.14), transparent 24%),
+        linear-gradient(180deg, #202a3c 0%, var(--bg) 100%);
     }
 
     .wrap {
-      width: min(calc(100% - 32px), var(--max));
-      margin: 0 auto;
       padding: 28px 0 64px;
     }
 
@@ -55,6 +60,14 @@
 
     .top a {
       text-decoration: none;
+    }
+
+    .top-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: flex-end;
     }
 
     .back {
@@ -151,46 +164,50 @@
         flex-direction: column;
         align-items: flex-start;
       }
+
+      .top-links {
+        justify-content: flex-start;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <div class="wrap container">
     <header class="top">
       <a class="back" href="../">← Home</a>
-      <a href="../blog/">Blog</a>
+      <nav class="top-links" aria-label="Secondary">
+        <a href="./" aria-current="page">Reports</a>
+        <a href="../blog/">Blog</a>
+      </nav>
     </header>
 
     <section class="hero">
       <h1>Reports</h1>
       <p>
-        A home for project documentation, technical walkthroughs, and notes
-        you want to keep published. Add new reports as subdirectories inside
-        <code>reports/</code> and link them here.
+        Curated project documentation and technical walkthroughs. When a report is worth
+        keeping, it gets its own page (and this index stays small on purpose).
       </p>
     </section>
 
-    <main class="list">
+    <main id="content" class="list">
       <article class="card">
         <p class="eyebrow">Published Report</p>
         <h2>CM4-NANO-A USB OTG Keyboard Setup</h2>
         <p>
-          Static, readable guide for configuring a Raspberry Pi CM4 on the
-          CM4-NANO-A board as a USB HID keyboard gadget running Debian Trixie.
+          Static, readable guide for configuring a Raspberry Pi CM4 on the CM4-NANO-A board
+          as a USB HID keyboard gadget running Debian Trixie.
         </p>
         <div class="meta">
           <span class="tag">Raspberry Pi</span>
           <span class="tag">USB Gadget</span>
           <span class="tag">Debian</span>
         </div>
-        <a class="card-link" href="./cm4-nano-a-usb-otg-keyboard-setup/">
-          Open report →
-        </a>
+        <a class="card-link" href="./cm4-nano-a-usb-otg-keyboard-setup/">Open report →</a>
       </article>
 
-      <section class="empty">
-        More project reports can be added here as you publish them.
-      </section>
+      <section class="empty">More project reports can be added here as you publish them.</section>
     </main>
   </div>
 </body>
