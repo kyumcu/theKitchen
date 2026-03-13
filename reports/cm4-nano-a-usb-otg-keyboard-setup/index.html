@@ -1,21 +1,588 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>CM4-NANO-A USB OTG Keyboard Setup</title>
-    <meta name="description" content="Interactive setup guide for configuring Raspberry Pi CM4 on CM4-NANO-A as a USB HID keyboard gadget running Debian Trixie." />
-    <meta name="keywords" content="Raspberry Pi, CM4, USB OTG, HID Keyboard, Debian Trixie" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="../assets/index-CkF2_oS4.js"></script>
-    <link rel="stylesheet" crossorigin href="../assets/index-Bmwpp4x8.css">
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CM4-NANO-A USB OTG Keyboard Setup</title>
+  <meta
+    name="description"
+    content="Static setup guide for configuring a Raspberry Pi CM4 on a CM4-NANO-A board as a USB HID keyboard gadget."
+  >
+  <style>
+    :root {
+      --bg: #0f131a;
+      --bg-soft: #171d27;
+      --panel: #1d2531;
+      --panel-strong: #0d1219;
+      --text: #edf4fb;
+      --muted: #a9bbcf;
+      --line: rgba(169, 187, 207, 0.18);
+      --accent: #7ee0af;
+      --accent-strong: #3cb87d;
+      --warning: #ffc267;
+      --danger: #ff8e8e;
+      --max: 1120px;
+      --radius: 22px;
+    }
 
-  <body>
-    <div id="root"></div>
-  </body>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(126, 224, 175, 0.11), transparent 24%),
+        linear-gradient(180deg, #121822 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    code,
+    pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    .wrap {
+      width: min(calc(100% - 32px), var(--max));
+      margin: 0 auto;
+      padding: 28px 0 72px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .topbar a {
+      text-decoration: none;
+      color: var(--muted);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+      gap: 22px;
+      margin-bottom: 30px;
+    }
+
+    .hero-main,
+    .hero-side,
+    .toc,
+    .section,
+    .callout {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .hero-main {
+      padding: 34px 30px;
+      background:
+        linear-gradient(135deg, rgba(126, 224, 175, 0.12), rgba(82, 164, 255, 0.06)),
+        var(--panel);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.3rem, 5vw, 4.4rem);
+      line-height: 0.98;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-main p {
+      margin: 18px 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 44rem;
+    }
+
+    .hero-side {
+      padding: 24px;
+    }
+
+    .hero-side h2,
+    .toc h2,
+    .section h2 {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .meta-list,
+    .toc ol,
+    .section ul,
+    .section ol {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .meta-list {
+      padding-left: 0;
+      list-style: none;
+      display: grid;
+      gap: 14px;
+    }
+
+    .meta-list li {
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .meta-list li:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+
+    .meta-label {
+      display: block;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.76rem;
+      margin-bottom: 4px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 22px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 20px;
+      align-self: start;
+      padding: 22px;
+    }
+
+    .toc ol {
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+    }
+
+    .toc a {
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      color: var(--text);
+    }
+
+    .content {
+      display: grid;
+      gap: 22px;
+    }
+
+    .section {
+      padding: 28px;
+    }
+
+    .section > p,
+    .section li {
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .section h3 {
+      margin: 28px 0 10px;
+      font-size: 1.15rem;
+      color: var(--accent);
+    }
+
+    .section h3:first-of-type {
+      margin-top: 0;
+    }
+
+    .section code {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.14rem 0.36rem;
+      border-radius: 6px;
+    }
+
+    pre {
+      margin: 14px 0 0;
+      padding: 16px;
+      overflow-x: auto;
+      background: var(--panel-strong);
+      border: 1px solid rgba(126, 224, 175, 0.12);
+      border-radius: 16px;
+      color: #d9e9f7;
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+    }
+
+    .callout {
+      padding: 18px 18px 18px 20px;
+      margin-top: 16px;
+      border-left: 4px solid var(--warning);
+      color: var(--muted);
+    }
+
+    .callout strong {
+      color: var(--text);
+    }
+
+    .danger {
+      border-left-color: var(--danger);
+    }
+
+    .refs {
+      display: grid;
+      gap: 10px;
+    }
+
+    .refs a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .refs a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 960px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        width: min(calc(100% - 20px), var(--max));
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero-main,
+      .hero-side,
+      .toc,
+      .section {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <a href="../">← Reports</a>
+      <a href="../../">Home</a>
+    </header>
+
+    <section class="hero">
+      <div class="hero-main">
+        <p class="eyebrow">Static Report</p>
+        <h1>CM4-NANO-A USB OTG Keyboard Setup</h1>
+        <p>
+          This is now a plain static guide instead of a bundled single-page app.
+          It documents how to configure a Raspberry Pi Compute Module 4 on a
+          Waveshare CM4-NANO-A board as a USB HID keyboard gadget on Debian
+          Trixie, with all commands kept directly in readable HTML.
+        </p>
+      </div>
+
+      <aside class="hero-side">
+        <h2>Scope</h2>
+        <ul class="meta-list">
+          <li>
+            <span class="meta-label">Platform</span>
+            Raspberry Pi CM4 on CM4-NANO-A
+          </li>
+          <li>
+            <span class="meta-label">Mode</span>
+            USB OTG peripheral, HID keyboard gadget
+          </li>
+          <li>
+            <span class="meta-label">OS</span>
+            Debian Trixie
+          </li>
+          <li>
+            <span class="meta-label">Result</span>
+            Host computer sees the CM4 as a USB keyboard
+          </li>
+        </ul>
+      </aside>
+    </section>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Table of contents">
+        <h2>Sections</h2>
+        <ol>
+          <li><a href="#introduction">Introduction</a></li>
+          <li><a href="#prerequisites">Prerequisites</a></li>
+          <li><a href="#configuration">USB OTG Configuration</a></li>
+          <li><a href="#gadget">Gadget Setup</a></li>
+          <li><a href="#testing">Testing</a></li>
+          <li><a href="#troubleshooting">Troubleshooting</a></li>
+          <li><a href="#references">References</a></li>
+        </ol>
+      </nav>
+
+      <main class="content">
+        <section class="section" id="introduction">
+          <h2>Introduction</h2>
+          <p>
+            The goal is to make the CM4 present itself to a host machine as a
+            standard USB keyboard over the USB-C OTG port. The overall flow is:
+            enable the DWC2 controller in peripheral mode, load the required
+            kernel modules, create the USB gadget with <code>libcomposite</code>,
+            and bind it through a small <code>systemd</code> service.
+          </p>
+          <h3>What You&apos;ll Learn</h3>
+          <ul>
+            <li>How to enable USB OTG mode on the CM4-NANO-A.</li>
+            <li>How to expose a HID keyboard gadget with <code>configfs</code>.</li>
+            <li>How to make the gadget come up automatically at boot.</li>
+            <li>How to test keystroke output via <code>/dev/hidg0</code>.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="prerequisites">
+          <h2>Prerequisites</h2>
+          <h3>Hardware</h3>
+          <ul>
+            <li>Raspberry Pi Compute Module 4 mounted on a Waveshare CM4-NANO-A.</li>
+            <li>USB-C cable connected from the OTG port to the host computer.</li>
+            <li>Power for the CM4 board.</li>
+          </ul>
+          <h3>Software</h3>
+          <ul>
+            <li>Debian Trixie installed on the CM4.</li>
+            <li>Shell access to the device, ideally over SSH after boot.</li>
+            <li>Basic familiarity with editing files using <code>nano</code>.</li>
+          </ul>
+          <div class="callout">
+            <strong>Tip:</strong> after rebooting into OTG mode, find the CM4&apos;s
+            IP address again and reconnect over SSH before continuing.
+          </div>
+        </section>
+
+        <section class="section" id="configuration">
+          <h2>USB OTG Configuration</h2>
+          <p>
+            On Debian Trixie, the relevant firmware configuration file is
+            usually <code>/boot/firmware/config.txt</code>.
+          </p>
+          <pre><code>sudo nano /boot/firmware/config.txt</code></pre>
+          <p>Add or confirm this line:</p>
+          <pre><code># Enable the DWC2 USB controller in peripheral mode for USB gadget functionality
+dtoverlay=dwc2,dr_mode=peripheral</code></pre>
+          <div class="callout">
+            <strong><code>dwc2</code></strong> enables the DWC2 USB controller.
+            <strong><code>dr_mode=peripheral</code></strong> forces device mode so the
+            board behaves as a gadget rather than a USB host.
+          </div>
+          <p>Then reboot the board:</p>
+          <pre><code>sudo reboot</code></pre>
+        </section>
+
+        <section class="section" id="gadget">
+          <h2>Gadget Setup</h2>
+
+          <h3>Step 1: Load Kernel Modules</h3>
+          <p>Edit <code>/etc/modules</code> so the required modules load at boot:</p>
+          <pre><code>sudo nano /etc/modules</code></pre>
+          <p>Add these lines:</p>
+          <pre><code>dwc2
+libcomposite</code></pre>
+
+          <h3>Step 2: Create the USB Gadget Script</h3>
+          <p>Create the script file:</p>
+          <pre><code>sudo nano /usr/local/bin/usb-hid-keyboard.sh</code></pre>
+          <p>Paste the following:</p>
+          <pre><code>#!/bin/bash
+
+set -e
+
+GADGET_DIR="/sys/kernel/config/usb_gadget/rpi_hid"
+FUNCTIONS_DIR="${GADGET_DIR}/functions/hid.usb0"
+CONFIGS_DIR="${GADGET_DIR}/configs/c.1"
+
+if [ -d "${GADGET_DIR}" ]; then
+    echo "USB gadget 'rpi_hid' already exists. Removing..."
+    if [ -f "${GADGET_DIR}/UDC" ]; then
+        echo "" &gt; "${GADGET_DIR}/UDC"
+    fi
+    rmdir "${CONFIGS_DIR}/hid.usb0"
+    rmdir "${FUNCTIONS_DIR}"
+    rmdir "${CONFIGS_DIR}"
+    rmdir "${GADGET_DIR}/strings/0x409"
+    rmdir "${GADGET_DIR}"
+fi
+
+echo "Creating USB HID keyboard gadget..."
+
+mkdir -p "${GADGET_DIR}"
+cd "${GADGET_DIR}"
+
+echo 0x1d6b &gt; idVendor
+echo 0x0104 &gt; idProduct
+echo 0x0100 &gt; bcdDevice
+echo 0x0200 &gt; bcdUSB
+
+mkdir -p strings/0x409
+echo "$(hostname)" &gt; strings/0x409/manufacturer
+echo "CM4 HID Keyboard" &gt; strings/0x409/product
+echo "$(head /dev/urandom | tr -dc A-F0-9 | head -c 12)" &gt; strings/0x409/serialnumber
+
+mkdir -p "${FUNCTIONS_DIR}"
+echo -ne "\x05\x01\x09\x06\xa1\x01\x05\x07\x19\xe0\x29\xe7\x15\x00\x25\x01\x75\x01\x95\x08\x81\x02\x95\x01\x75\x08\x81\x01\x05\x08\x19\x01\x29\x05\x95\x05\x75\x01\x81\x02\x95\x01\x75\x03\x81\x01\x19\x00\x29\x65\x15\x00\x25\x65\x95\x06\x75\x08\x81\x00\xc0" &gt; "${FUNCTIONS_DIR}/report_desc"
+echo 1 &gt; "${FUNCTIONS_DIR}/protocol"
+echo 1 &gt; "${FUNCTIONS_DIR}/subclass"
+echo 8 &gt; "${FUNCTIONS_DIR}/report_length"
+
+mkdir -p "${CONFIGS_DIR}"
+mkdir -p "${CONFIGS_DIR}/strings/0x409"
+echo "Config 1: HID Keyboard" &gt; "${CONFIGS_DIR}/strings/0x409/configuration"
+echo 250 &gt; "${CONFIGS_DIR}/MaxPower"
+
+ln -s "${FUNCTIONS_DIR}" "${CONFIGS_DIR}"
+
+UDC_NAME=$(ls /sys/class/udc)
+if [ -n "${UDC_NAME}" ]; then
+    echo "Binding gadget to UDC: ${UDC_NAME}"
+    echo "${UDC_NAME}" &gt; "${GADGET_DIR}/UDC"
+else
+    echo "Error: No UDC found. USB gadget will not be enabled."
+    exit 1
+fi
+
+echo "USB HID keyboard gadget created successfully."</code></pre>
+          <p>Make it executable:</p>
+          <pre><code>sudo chmod +x /usr/local/bin/usb-hid-keyboard.sh</code></pre>
+
+          <h3>Step 3: Create the Systemd Service</h3>
+          <p>Create the service file:</p>
+          <pre><code>sudo nano /etc/systemd/system/usb-hid-keyboard.service</code></pre>
+          <p>Use this content:</p>
+          <pre><code>[Unit]
+Description=USB HID Keyboard Gadget
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/usb-hid-keyboard.sh
+ExecStop=/bin/sh -c 'echo "" &gt; /sys/kernel/config/usb_gadget/rpi_hid/UDC'
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+          <p>Enable the service and start it:</p>
+          <pre><code>sudo systemctl enable usb-hid-keyboard.service
+sudo systemctl start usb-hid-keyboard.service</code></pre>
+          <p>Verify the status:</p>
+          <pre><code>systemctl status usb-hid-keyboard.service</code></pre>
+        </section>
+
+        <section class="section" id="testing">
+          <h2>Testing</h2>
+
+          <h3>Connection and Recognition</h3>
+          <ol>
+            <li>Connect the CM4-NANO-A USB-C port to the host computer.</li>
+            <li>The host should detect a new USB HID keyboard device.</li>
+          </ol>
+
+          <h3>Sending Keystrokes</h3>
+          <p>
+            Write 8-byte HID reports to <code>/dev/hidg0</code>. Byte 0 carries
+            modifier keys, byte 1 is reserved, and bytes 2-7 hold up to six
+            concurrent keycodes.
+          </p>
+          <pre><code># Press Shift + a
+echo -ne "\x02\x00\x04\x00\x00\x00\x00\x00" &gt; /dev/hidg0
+# Release all keys
+echo -ne "\x00\x00\x00\x00\x00\x00\x00\x00" &gt; /dev/hidg0</code></pre>
+          <pre><code># H (Shift + h)
+echo -ne "\x02\x00\x0b\x00\x00\x00\x00\x00" &gt; /dev/hidg0
+echo -ne "\x00\x00\x00\x00\x00\x00\x00\x00" &gt; /dev/hidg0
+echo -ne "\x00\x00\x08\x00\x00\x00\x00\x00" &gt; /dev/hidg0
+echo -ne "\x00\x00\x00\x00\x00\x00\x00\x00" &gt; /dev/hidg0
+echo -ne "\x00\x00\x0f\x00\x00\x00\x00\x00" &gt; /dev/hidg0
+echo -ne "\x00\x00\x00\x00\x00\x00\x00\x00" &gt; /dev/hidg0
+echo -ne "\x00\x00\x0f\x00\x00\x00\x00\x00" &gt; /dev/hidg0
+echo -ne "\x00\x00\x00\x00\x00\x00\x00\x00" &gt; /dev/hidg0
+echo -ne "\x00\x00\x12\x00\x00\x00\x00\x00" &gt; /dev/hidg0
+echo -ne "\x00\x00\x00\x00\x00\x00\x00\x00" &gt; /dev/hidg0</code></pre>
+        </section>
+
+        <section class="section" id="troubleshooting">
+          <h2>Troubleshooting</h2>
+          <h3>CM4 Not Recognized by the Host</h3>
+          <ul>
+            <li>Verify <code>dtoverlay=dwc2,dr_mode=peripheral</code> in <code>/boot/firmware/config.txt</code>.</li>
+            <li>Confirm the modules are loaded:</li>
+          </ul>
+          <pre><code>lsmod | grep dwc2
+lsmod | grep libcomposite</code></pre>
+          <ul>
+            <li>Check whether the service is active:</li>
+          </ul>
+          <pre><code>systemctl status usb-hid-keyboard.service</code></pre>
+
+          <h3>Device Exists but Input Does Not Work</h3>
+          <ul>
+            <li>Verify that <code>/dev/hidg0</code> exists.</li>
+            <li>Double-check the HID report descriptor in the script.</li>
+            <li>Make sure the gadget is bound to a valid UDC under <code>/sys/class/udc</code>.</li>
+          </ul>
+
+          <div class="callout danger">
+            <strong>Note:</strong> this guide is intentionally plain and readable.
+            If you revise the commands, keep them in raw HTML rather than
+            reintroducing compiled frontend output.
+          </div>
+        </section>
+
+        <section class="section" id="references">
+          <h2>References</h2>
+          <div class="refs">
+            <a href="https://www.waveshare.com/wiki/CM4-NANO-A" target="_blank" rel="noopener">Waveshare Wiki: CM4-NANO-A</a>
+            <a href="https://www.raspberrypi.com/documentation/computers/config_txt.html" target="_blank" rel="noopener">Raspberry Pi documentation: config.txt</a>
+            <a href="https://www.usb.org/sites/default/files/documents/hid1_11.pdf" target="_blank" rel="noopener">USB HID Usage Tables / HID specification</a>
+            <a href="https://forums.raspberrypi.com/viewtopic.php?t=312809" target="_blank" rel="noopener">Raspberry Pi forums: USB gadget mode discussion</a>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
 </html>
